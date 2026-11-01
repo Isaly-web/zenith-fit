@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Flame, ArrowRight, ShieldCheck, Clock, History, Target, Sparkles } from "lucide-react";
 import { AppShell, Card, SectionTitle } from "@/components/AppShell";
+import { InstallAppPrompt } from "@/components/install-app-prompt";
 import { useFitness } from "@/lib/fitness/store";
 import { computeReadiness, computeStats, weeklyPlan, dayKey } from "@/lib/fitness/engine";
 import { typeMeta } from "@/lib/fitness/catalog";
@@ -55,6 +56,7 @@ function Dashboard() {
         </div>
       }
     >
+      <InstallAppPrompt />
       <Card className="relative overflow-hidden">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">

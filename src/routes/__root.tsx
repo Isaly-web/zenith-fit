@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { FitnessProvider } from "../lib/fitness/store";
 import { Toaster } from "sonner";
+import { SiteFooter } from "../components/SiteFooter";
 
 function NotFoundComponent() {
   return (
@@ -134,6 +135,7 @@ function RootComponent() {
       <FitnessProvider>
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
+        <SiteFooter />
         <Toaster position="top-center" richColors />
       </FitnessProvider>
     </QueryClientProvider>

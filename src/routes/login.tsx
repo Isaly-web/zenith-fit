@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SUPPORT_MAILTO } from "@/lib/app-config";
 
 export const Route = createFileRoute("/login")({
   ssr: false,
@@ -173,6 +174,19 @@ function LoginPage() {
             Isaly
           </Link>
           .
+        </p>
+        <p className="mt-2 text-center text-xs text-muted-foreground">
+          <Link to="/terms" className="underline">
+            Terms
+          </Link>{" "}
+          ·{" "}
+          <Link to="/privacy" className="underline">
+            Privacy
+          </Link>{" "}
+          ·{" "}
+          <a href={SUPPORT_MAILTO} className="underline">
+            Support
+          </a>
         </p>
       </div>
     </div>

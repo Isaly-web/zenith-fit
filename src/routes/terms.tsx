@@ -22,9 +22,9 @@ const sections: LegalSection[] = [
     body: (
       <>
         <p>
-          {APP_NAME} is provided by <Todo>ISALY LEGAL ENTITY</Todo>, organisation number{" "}
-          <Todo>ORGANISATION NUMBER</Todo>. At sign-in it is described as a demo product built by
-          Isaly. <Todo>CONFIRM THE STATUS OF THE SERVICE (DEMO OR LIVE)</Todo>
+          {APP_NAME} is provided by Isaly AB, organisation number 559472-5763. At sign-in it is
+          described as a demo product built by Isaly.{" "}
+          <Todo>CONFIRM THE STATUS OF THE SERVICE (DEMO OR LIVE)</Todo>
         </p>
         <p>
           The service builds and adapts workout sessions to your goals, preferences and the feedback

@@ -27,8 +27,8 @@ const sections: LegalSection[] = [
           426&nbsp;69 Västra Frölunda.
         </p>
         <p>
-          Contact for privacy questions: <a href={SUPPORT_MAILTO}>{SUPPORT_EMAIL}</a>{" "}
-          <Todo>CONFIRM CONTACT ADDRESS FOR PRIVACY QUESTIONS</Todo>
+          Contact for privacy questions: <a href={SUPPORT_MAILTO}>{SUPPORT_EMAIL}</a> or by post to
+          Isaly AB, Grimmeredsvägen 45, 426&nbsp;69 Västra Frölunda.
         </p>
       </>
     ),
@@ -99,8 +99,8 @@ const sections: LegalSection[] = [
     body: (
       <p>
         You have the right to access, rectification and, where the law allows, erasure, restriction
-        and portability. Contact <a href={SUPPORT_MAILTO}>{SUPPORT_EMAIL}</a>.{" "}
-        <Todo>RESPONSE TIME, at most one month under GDPR</Todo>.
+        and portability. Contact <a href={SUPPORT_MAILTO}>{SUPPORT_EMAIL}</a>. We respond without
+        undue delay and at the latest within one month.
       </p>
     ),
   },
@@ -132,7 +132,7 @@ function PrivacyPage() {
   return (
     <LegalPage
       title="Privacy policy"
-      lastUpdated={<Todo>DATE OF THE APPROVED VERSION</Todo>}
+      lastUpdated="2026-11-03"
       intro={<p>This policy describes how {APP_NAME} handles personal data.</p>}
       sections={sections}
     />

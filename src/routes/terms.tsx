@@ -93,7 +93,7 @@ function TermsPage() {
   return (
     <LegalPage
       title="Terms of use"
-      lastUpdated={<Todo>DATE OF THE APPROVED VERSION</Todo>}
+      lastUpdated="2026-11-03"
       intro={<p>By using {APP_NAME} you agree to these terms.</p>}
       sections={sections}
     />

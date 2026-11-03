@@ -99,8 +99,8 @@ const sections: LegalSection[] = [
     body: (
       <p>
         You have the right to access, rectification and, where the law allows, erasure, restriction
-        and portability. Contact <a href={SUPPORT_MAILTO}>{SUPPORT_EMAIL}</a>.{" "}
-        <Todo>RESPONSE TIME, at most one month under GDPR</Todo>.
+        and portability. Contact <a href={SUPPORT_MAILTO}>{SUPPORT_EMAIL}</a>. We respond without
+        undue delay and at the latest within one month.
       </p>
     ),
   },

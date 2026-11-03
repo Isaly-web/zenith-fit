@@ -23,8 +23,8 @@ const sections: LegalSection[] = [
     body: (
       <>
         <p>
-          The data controller is <Todo>ISALY LEGAL ENTITY</Todo>, organisation number{" "}
-          <Todo>ORGANISATION NUMBER</Todo>, <Todo>POSTAL ADDRESS</Todo>.
+          The data controller is Isaly AB, organisation number 559472-5763, Grimmeredsvägen 45,
+          426&nbsp;69 Västra Frölunda.
         </p>
         <p>
           Contact for privacy questions: <a href={SUPPORT_MAILTO}>{SUPPORT_EMAIL}</a>{" "}

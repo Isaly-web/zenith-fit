@@ -64,7 +64,8 @@ const sections: LegalSection[] = [
     heading: "Pricing and payment",
     body: (
       <p>
-        <Todo>PRICING AND PAYMENT TERMS (if the service becomes paid)</Todo>
+        The service is free of charge during the beta period.{" "}
+        <Todo>PRICING AND PAYMENT TERMS AFTER THE BETA PERIOD</Todo>
       </p>
     ),
   },

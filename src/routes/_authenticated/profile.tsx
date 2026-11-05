@@ -5,6 +5,7 @@ import { AppShell, Card, Pill, SectionTitle } from "@/components/AppShell";
 import { useFitness } from "@/lib/fitness/store";
 import { LIMITATIONS, WORKOUT_TYPES } from "@/lib/fitness/catalog";
 import { supabase } from "@/integrations/supabase/client";
+import { HealthConsentGate, HealthConsentSettings } from "@/components/HealthConsent";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
@@ -47,36 +48,38 @@ function ProfilePage() {
       </Card>
 
       <SectionTitle>Physical limitations</SectionTitle>
-      <Card>
-        <p className="mb-3 text-sm text-muted-foreground">
-          The AI physiotherapist avoids exercises that load these areas and substitutes safe
-          alternatives instead.
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {LIMITATIONS.map((l) => (
-            <Pill
-              key={l.id}
-              active={p.limitations.includes(l.id)}
-              onClick={() =>
-                updateProfile({
-                  limitations: p.limitations.includes(l.id)
-                    ? p.limitations.filter((x) => x !== l.id)
-                    : [...p.limitations, l.id],
-                })
-              }
-            >
-              {l.label}
-            </Pill>
-          ))}
-        </div>
-        <textarea
-          value={p.limitationNotes}
-          onChange={(e) => updateProfile({ limitationNotes: e.target.value })}
-          rows={3}
-          placeholder="Notes — e.g. left knee meniscus, no deep flexion"
-          className="mt-3 w-full rounded-2xl border border-border bg-background p-4 text-sm outline-none focus:border-primary"
-        />
-      </Card>
+      <HealthConsentGate>
+        <Card>
+          <p className="mb-3 text-sm text-muted-foreground">
+            The AI physiotherapist avoids exercises that load these areas and substitutes safe
+            alternatives instead.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {LIMITATIONS.map((l) => (
+              <Pill
+                key={l.id}
+                active={p.limitations.includes(l.id)}
+                onClick={() =>
+                  updateProfile({
+                    limitations: p.limitations.includes(l.id)
+                      ? p.limitations.filter((x) => x !== l.id)
+                      : [...p.limitations, l.id],
+                  })
+                }
+              >
+                {l.label}
+              </Pill>
+            ))}
+          </div>
+          <textarea
+            value={p.limitationNotes}
+            onChange={(e) => updateProfile({ limitationNotes: e.target.value })}
+            rows={3}
+            placeholder="Notes — e.g. left knee meniscus, no deep flexion"
+            className="mt-3 w-full rounded-2xl border border-border bg-background p-4 text-sm outline-none focus:border-primary"
+          />
+        </Card>
+      </HealthConsentGate>
 
       <SectionTitle>Preferred workout types</SectionTitle>
       <Card>
@@ -116,6 +119,8 @@ function ProfilePage() {
           Rest days are spread evenly across the week around this number.
         </p>
       </Card>
+
+      <HealthConsentSettings />
 
       <button
         type="button"

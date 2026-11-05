@@ -43,8 +43,36 @@ const sections: LegalSection[] = [
           medical or physiotherapy advice. Stop if something hurts, and talk to a doctor or
           physiotherapist about injuries. You are responsible for how you train.
         </p>
+      </>
+    ),
+  },
+  {
+    id: "beta-liability",
+    heading: "Beta service and liability",
+    body: (
+      <>
         <p>
-          <Todo>LIABILITY LIMITATION AND WARRANTIES — CONFIRM WITH A LAWYER</Todo>
+          {APP_NAME} is a beta service. It is provided as is and without warranties that it is
+          error-free, always available or fit for a particular purpose.
+        </p>
+        <p>
+          Isaly AB&apos;s liability for damage is limited to the extent permitted by law. The
+          limitation never applies to damage caused by intent or gross negligence.
+        </p>
+        <p>
+          If you are a consumer, your rights under mandatory consumer protection law apply
+          regardless of these terms. Nothing in these terms limits them.
+        </p>
+        <p>Specifically for {APP_NAME}:</p>
+        <ul className="list-disc space-y-1 pl-5">
+          <li>
+            Training and health: Sessions and notes are general guidance and not medical or
+            physiotherapy advice. The service does not replace a doctor or physiotherapist. Consult
+            a professional before training if you have an injury, illness or other health condition.
+          </li>
+        </ul>
+        <p>
+          <Todo>LAWYER TO REVIEW THE BETA SERVICE AND LIABILITY SECTION (INCL. CONSUMER LAW)</Todo>
         </p>
       </>
     ),
@@ -106,7 +134,7 @@ function TermsPage() {
   return (
     <LegalPage
       title="Terms of use"
-      lastUpdated="2026-11-03"
+      lastUpdated="2026-11-05"
       intro={<p>By using {APP_NAME} you agree to these terms.</p>}
       sections={sections}
     />

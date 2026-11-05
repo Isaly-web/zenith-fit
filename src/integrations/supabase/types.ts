@@ -154,7 +154,6 @@ export interface Database {
     Functions: {
       grant_health_consent: { Args: { p_version: string }; Returns: undefined };
       withdraw_health_consent: { Args: { p_version: string }; Returns: undefined };
-      has_health_consent: { Args: { p_user: string }; Returns: boolean };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

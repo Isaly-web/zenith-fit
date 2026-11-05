@@ -75,8 +75,10 @@ as $$
     false);
 $$;
 
-revoke all on function zenith_fit.has_health_consent(uuid) from public;
-grant execute on function zenith_fit.has_health_consent(uuid) to authenticated, service_role;
+-- Service role only: the app reads its own consent_events rows, and callable-by-anyone would
+-- let a user probe another user's consent status.
+revoke all on function zenith_fit.has_health_consent(uuid) from public, anon, authenticated;
+grant execute on function zenith_fit.has_health_consent(uuid) to service_role;
 
 create or replace function zenith_fit.grant_health_consent(p_version text)
 returns void

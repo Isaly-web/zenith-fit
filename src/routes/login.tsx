@@ -40,6 +40,7 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [ageOk, setAgeOk] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -49,6 +50,10 @@ function LoginPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (mode === "signup" && !ageOk) {
+      toast.error("You must be at least 18 to create an account.");
+      return;
+    }
     setBusy(true);
     try {
       if (mode === "signin") {
@@ -128,6 +133,17 @@ function LoginPage() {
                 />
               </div>
             )}
+            {mode === "signup" && (
+              <label className="flex items-start gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={ageOk}
+                  onChange={(e) => setAgeOk(e.target.checked)}
+                  className="mt-0.5 h-4 w-4"
+                />
+                <span>I am at least 18 years old</span>
+              </label>
+            )}
             <Button type="submit" disabled={busy} className="w-full rounded-3xl">
               {mode === "signin"
                 ? "Sign in"
@@ -169,6 +185,9 @@ function LoginPage() {
         </div>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
+          This service is for people aged 18 or older.
+        </p>
+        <p className="mt-2 text-center text-xs text-muted-foreground">
           By continuing you agree this is a demo product built by{" "}
           <Link to="/" className="underline">
             Isaly

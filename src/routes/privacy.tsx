@@ -84,6 +84,17 @@ const sections: LegalSection[] = [
     ),
   },
   {
+    id: "age",
+    heading: "Age limit",
+    body: (
+      <p>
+        The service is only for people aged 18 or older, because it handles health-related
+        information. We do not create accounts for people under 18, and if we learn that an account
+        belongs to someone under 18 we delete it.
+      </p>
+    ),
+  },
+  {
     id: "retention",
     heading: "How long we keep data",
     body: (

@@ -60,6 +60,18 @@ const sections: LegalSection[] = [
     ),
   },
   {
+    id: "age",
+    heading: "Age requirement",
+    body: (
+      <p>
+        You must be at least 18 years old to create an account and use {APP_NAME}, because the
+        service handles health-related information such as physical limitations and training
+        feedback. By creating an account you confirm that you meet this requirement. We may delete
+        accounts that belong to people under 18.
+      </p>
+    ),
+  },
+  {
     id: "pricing",
     heading: "Pricing and payment",
     body: (

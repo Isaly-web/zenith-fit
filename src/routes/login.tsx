@@ -137,6 +137,7 @@ function LoginPage() {
               <label className="flex items-start gap-2 text-sm">
                 <input
                   type="checkbox"
+                  required
                   checked={ageOk}
                   onChange={(e) => setAgeOk(e.target.checked)}
                   className="mt-0.5 h-4 w-4"

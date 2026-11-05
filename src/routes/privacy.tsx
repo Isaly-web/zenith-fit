@@ -54,8 +54,13 @@ const sections: LegalSection[] = [
           <li>Goals you set for sessions, minutes or streaks.</li>
         </ul>
         <p>
-          Limitations, soreness and similar notes relate to your health and can be sensitive
-          personal data. <Todo>CONFIRM LEGAL BASIS AND CONSENT FOR HEALTH DATA</Todo>
+          Limitations, your notes about them, soreness ratings and the physio notes derived from
+          them relate to your health and are sensitive personal data. We process them only with your
+          explicit consent, which you give with a separate checkbox before entering them. You can
+          withdraw your consent at any time in your profile; when you do, this health data is erased
+          from your account and sessions are no longer adapted to it. The record that you gave or
+          withdrew consent (time and version of the text) is kept as proof.{" "}
+          <Todo>LAWYER TO CONFIRM CONSENT WORDING AND RETENTION OF THE CONSENT RECORD</Todo>
         </p>
       </>
     ),

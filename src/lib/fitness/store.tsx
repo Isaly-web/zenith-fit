@@ -12,6 +12,7 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database, Json } from "@/integrations/supabase/types";
+import { HEALTH_CONSENT_VERSION } from "@/lib/app-config";
 import type {
   FitnessState,
   Feedback,
@@ -84,10 +85,21 @@ function rowToGoal(row: GoalRow): Goal {
   };
 }
 
+/** Health data (limitations, soreness, physio notes) is hidden and never written without consent. */
+function withoutHealthData(w: Workout): Workout {
+  const { physioNote: _physioNote, ...rest } = w;
+  return {
+    ...rest,
+    ...(w.feedback ? { feedback: { ...w.feedback, soreness: ["none"] } } : {}),
+  };
+}
+
 function workoutToRow(
   w: Workout,
   userId: string,
+  healthConsent: boolean,
 ): Database["zenith_fit"]["Tables"]["workouts"]["Insert"] {
+  if (!healthConsent) w = withoutHealthData(w);
   return {
     id: w.id,
     user_id: userId,
@@ -122,12 +134,14 @@ function goalToRow(g: Goal, userId: string): Database["zenith_fit"]["Tables"]["g
 function profileToRow(
   p: Profile,
   userId: string,
+  healthConsent: boolean,
 ): Database["zenith_fit"]["Tables"]["profiles"]["Insert"] {
   return {
     id: userId,
     name: p.name,
-    limitations: p.limitations,
-    limitation_notes: p.limitationNotes,
+    // Without consent the limitation columns are left out of the upsert, so health data that was
+    // saved before consent existed is neither used nor overwritten (withdrawing erases it).
+    ...(healthConsent ? { limitations: p.limitations, limitation_notes: p.limitationNotes } : {}),
     preferred_types: p.preferredTypes,
     weekly_target: p.weeklyTarget,
   };
@@ -141,6 +155,10 @@ function reportError(action: string, error: unknown) {
 interface Ctx {
   state: FitnessState;
   hydrated: boolean;
+  /** True while the user has an active consent to health data (limitations, soreness, physio notes). */
+  healthConsent: boolean;
+  grantHealthConsent: () => Promise<boolean>;
+  withdrawHealthConsent: () => Promise<boolean>;
   saveWorkout: (w: Workout) => void;
   completeWorkout: (id: string, feedback: Feedback) => void;
   deleteWorkout: (id: string) => void;
@@ -157,9 +175,18 @@ export function FitnessProvider({ children }: { children: ReactNode }) {
   const stateRef = useRef(state);
   stateRef.current = state;
   const userIdRef = useRef<string | null>(null);
+  const [healthConsent, setHealthConsent] = useState(false);
+  const consentRef = useRef(false);
 
   const loadAll = useCallback(async (userId: string) => {
-    const [profileResult, workoutsResult, goalsResult] = await Promise.all([
+    const [consentResult, profileResult, workoutsResult, goalsResult] = await Promise.all([
+      supabase
+        .from("consent_events")
+        .select("action")
+        .eq("purpose", "health_data")
+        .order("id", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
       supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
       supabase
         .from("workouts")
@@ -173,13 +200,19 @@ export function FitnessProvider({ children }: { children: ReactNode }) {
         .order("created_at", { ascending: true }),
     ]);
 
+    if (consentResult.error) reportError("loading your consent", consentResult.error);
+    const consent = consentResult.data?.action === "granted";
+    consentRef.current = consent;
+    setHealthConsent(consent);
+
     let profile = initialState.profile;
     if (profileResult.data) {
       profile = rowToProfile(profileResult.data);
+      if (!consent) profile = { ...profile, limitations: [], limitationNotes: "" };
     } else {
       const { data: inserted, error } = await supabase
         .from("profiles")
-        .insert(profileToRow(initialState.profile, userId))
+        .insert(profileToRow(initialState.profile, userId, consent))
         .select()
         .maybeSingle();
       if (error) reportError("creating your profile", error);
@@ -191,7 +224,9 @@ export function FitnessProvider({ children }: { children: ReactNode }) {
 
     setState({
       profile,
-      workouts: (workoutsResult.data ?? []).map(rowToWorkout),
+      workouts: (workoutsResult.data ?? [])
+        .map(rowToWorkout)
+        .map((w) => (consent ? w : withoutHealthData(w))),
       goals: (goalsResult.data ?? []).map(rowToGoal),
     });
     setHydrated(true);
@@ -207,6 +242,8 @@ export function FitnessProvider({ children }: { children: ReactNode }) {
       if (userId) void loadAll(userId);
       else {
         setState(initialState);
+        consentRef.current = false;
+        setHealthConsent(false);
         setHydrated(true);
       }
     });
@@ -220,6 +257,8 @@ export function FitnessProvider({ children }: { children: ReactNode }) {
         void loadAll(userId);
       } else {
         setState(initialState);
+        consentRef.current = false;
+        setHealthConsent(false);
         setHydrated(true);
       }
     });
@@ -236,13 +275,16 @@ export function FitnessProvider({ children }: { children: ReactNode }) {
     if (!userId) return;
     void supabase
       .from("workouts")
-      .insert(workoutToRow(w, userId))
+      .insert(workoutToRow(w, userId, consentRef.current))
       .then(({ error }) => {
         if (error) reportError("saving your session", error);
       });
   }, []);
 
-  const completeWorkout = useCallback((id: string, feedback: Feedback) => {
+  const completeWorkout = useCallback((id: string, rawFeedback: Feedback) => {
+    const feedback: Feedback = consentRef.current
+      ? rawFeedback
+      : { ...rawFeedback, soreness: ["none"] };
     const completedAt = new Date().toISOString();
     setState((s) => ({
       ...s,
@@ -271,14 +313,16 @@ export function FitnessProvider({ children }: { children: ReactNode }) {
       });
   }, []);
 
-  const updateProfile = useCallback((p: Partial<Profile>) => {
+  const updateProfile = useCallback((patch: Partial<Profile>) => {
+    const { limitations: _l, limitationNotes: _n, ...nonHealth } = patch;
+    const p = consentRef.current ? patch : nonHealth;
     const next = { ...stateRef.current.profile, ...p };
     setState((s) => ({ ...s, profile: next }));
     const userId = userIdRef.current;
     if (!userId) return;
     void supabase
       .from("profiles")
-      .upsert(profileToRow(next, userId))
+      .upsert(profileToRow(next, userId, consentRef.current))
       .then(({ error }) => {
         if (error) reportError("saving your profile", error);
       });
@@ -308,10 +352,41 @@ export function FitnessProvider({ children }: { children: ReactNode }) {
       });
   }, []);
 
+  const grantHealthConsent = useCallback(async () => {
+    const userId = userIdRef.current;
+    if (!userId) return false;
+    const { error } = await supabase.rpc("grant_health_consent", {
+      p_version: HEALTH_CONSENT_VERSION,
+    });
+    if (error) {
+      reportError("saving your consent", error);
+      return false;
+    }
+    await loadAll(userId);
+    return true;
+  }, [loadAll]);
+
+  const withdrawHealthConsent = useCallback(async () => {
+    const userId = userIdRef.current;
+    if (!userId) return false;
+    const { error } = await supabase.rpc("withdraw_health_consent", {
+      p_version: HEALTH_CONSENT_VERSION,
+    });
+    if (error) {
+      reportError("withdrawing your consent", error);
+      return false;
+    }
+    await loadAll(userId);
+    return true;
+  }, [loadAll]);
+
   const value = useMemo(
     () => ({
       state,
       hydrated,
+      healthConsent,
+      grantHealthConsent,
+      withdrawHealthConsent,
       saveWorkout,
       completeWorkout,
       deleteWorkout,
@@ -322,6 +397,9 @@ export function FitnessProvider({ children }: { children: ReactNode }) {
     [
       state,
       hydrated,
+      healthConsent,
+      grantHealthConsent,
+      withdrawHealthConsent,
       saveWorkout,
       completeWorkout,
       deleteWorkout,

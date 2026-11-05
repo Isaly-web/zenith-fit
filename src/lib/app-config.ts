@@ -8,3 +8,7 @@ export const APP_NAME = "Nordvital";
 export const SUPPORT_EMAIL = "support@isaly.se";
 
 export const SUPPORT_MAILTO = `mailto:${SUPPORT_EMAIL}`;
+
+// Version of the health-data consent text shown in the app (and in /privacy). Bump it when the
+// wording changes in a way that needs a new consent; the version is stored with every grant.
+export const HEALTH_CONSENT_VERSION = "2026-11-05";

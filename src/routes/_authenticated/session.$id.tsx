@@ -3,6 +3,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { ShieldCheck, Sparkles } from "lucide-react";
 import { AppShell, Card, Pill, SectionTitle } from "@/components/AppShell";
+import { HealthConsentGate } from "@/components/HealthConsent";
 import { useFitness } from "@/lib/fitness/store";
 import { LIMITATIONS, typeMeta } from "@/lib/fitness/catalog";
 import type { Feedback, LimitationId } from "@/lib/fitness/types";
@@ -71,23 +72,27 @@ function SessionPage() {
         <SectionTitle>How is your energy level?</SectionTitle>
         <Scale value={energy} onChange={setEnergy} low="Drained" high="Energised" />
 
-        <SectionTitle>Do you have soreness?</SectionTitle>
-        <div className="flex flex-wrap gap-2">
-          <Pill active={soreness.length === 0} onClick={() => setSoreness([])}>
-            None
-          </Pill>
-          {LIMITATIONS.map((l) => (
-            <Pill
-              key={l.id}
-              active={soreness.includes(l.id)}
-              onClick={() =>
-                setSoreness((s) => (s.includes(l.id) ? s.filter((x) => x !== l.id) : [...s, l.id]))
-              }
-            >
-              {l.label}
+        <HealthConsentGate>
+          <SectionTitle>Do you have soreness?</SectionTitle>
+          <div className="flex flex-wrap gap-2">
+            <Pill active={soreness.length === 0} onClick={() => setSoreness([])}>
+              None
             </Pill>
-          ))}
-        </div>
+            {LIMITATIONS.map((l) => (
+              <Pill
+                key={l.id}
+                active={soreness.includes(l.id)}
+                onClick={() =>
+                  setSoreness((s) =>
+                    s.includes(l.id) ? s.filter((x) => x !== l.id) : [...s, l.id],
+                  )
+                }
+              >
+                {l.label}
+              </Pill>
+            ))}
+          </div>
+        </HealthConsentGate>
 
         <SectionTitle>How do you feel today?</SectionTitle>
         <div className="flex flex-wrap gap-2">

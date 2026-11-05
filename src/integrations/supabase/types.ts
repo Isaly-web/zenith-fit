@@ -92,6 +92,33 @@ export interface Database {
         };
         Relationships: [];
       };
+      consent_events: {
+        Row: {
+          id: number;
+          user_id: string;
+          purpose: string;
+          action: string;
+          version: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: never;
+          user_id: string;
+          purpose: string;
+          action: string;
+          version: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: never;
+          user_id?: string;
+          purpose?: string;
+          action?: string;
+          version?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       goals: {
         Row: {
           id: string;
@@ -124,7 +151,11 @@ export interface Database {
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      grant_health_consent: { Args: { p_version: string }; Returns: undefined };
+      withdraw_health_consent: { Args: { p_version: string }; Returns: undefined };
+      has_health_consent: { Args: { p_user: string }; Returns: boolean };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };

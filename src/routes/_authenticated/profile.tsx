@@ -1,6 +1,19 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { useState } from "react";
 import { LogOut } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { deleteMyData } from "@/lib/account";
 import { AppShell, Card, Pill, SectionTitle } from "@/components/AppShell";
 import { useFitness } from "@/lib/fitness/store";
 import { LIMITATIONS, WORKOUT_TYPES } from "@/lib/fitness/catalog";
@@ -28,6 +41,19 @@ function ProfilePage() {
   const { state, updateProfile } = useFitness();
   const navigate = useNavigate();
   const p = state.profile;
+  const [deleting, setDeleting] = useState(false);
+
+  const deleteData = async () => {
+    setDeleting(true);
+    try {
+      await deleteMyData(supabase);
+      toast.success("Your data has been deleted");
+      void navigate({ to: "/login" });
+    } catch {
+      toast.error("Could not delete your data. Please try again.");
+      setDeleting(false);
+    }
+  };
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -133,6 +159,42 @@ function ProfilePage() {
         <LogOut className="size-4" />
         Sign out
       </button>
+
+      <Card>
+        <h2 className="text-base font-medium">Delete my data</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Deletes your profile, workouts and goals in Nordvital. This cannot be undone. Your Isaly
+          account is shared with other Isaly apps and is not deleted from here.{" "}
+          <Link to="/privacy" className="underline">
+            Read the privacy policy
+          </Link>
+          .
+        </p>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <button
+              type="button"
+              disabled={deleting}
+              className="mt-4 w-full rounded-3xl border border-destructive px-6 py-3 text-sm font-medium text-destructive disabled:opacity-50"
+            >
+              Delete my data
+            </button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete all your data?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Your profile, workouts and goals are deleted immediately and cannot be restored. You
+                will be signed out on this device.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={deleteData}>Delete everything</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </Card>
     </AppShell>
   );
 }

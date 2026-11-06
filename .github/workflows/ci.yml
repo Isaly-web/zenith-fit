@@ -2,9 +2,6 @@ name: CI
 
 # Isaly App Foundation: formatting, lint, typecheck and build are blocking on every pull request.
 # Migrations are checked after merge by migration-drift-check.yml.
-#
-# There is no test runner in this repository yet (no vitest, no tests). Add vitest as a
-# devDependency together with the first tests, then add a `bunx vitest run` step here.
 on:
   pull_request:
 
@@ -17,7 +14,7 @@ concurrency:
 
 jobs:
   checks:
-    name: Format, lint, typecheck, build
+    name: Format, lint, tests, typecheck, build
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -40,6 +37,9 @@ jobs:
 
       - name: ESLint
         run: bun run lint --max-warnings 0
+
+      - name: Tests
+        run: bun run test
 
       - name: Typecheck
         run: bunx tsc --noEmit -p .

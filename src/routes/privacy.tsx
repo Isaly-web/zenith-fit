@@ -125,10 +125,17 @@ const sections: LegalSection[] = [
     heading: "Deleting your account",
     body: (
       <p>
+        On the <Link to="/profile">profile page</Link> you can delete all your data in {APP_NAME}
+        yourself: your profile, workouts and goals. It happens immediately and cannot be undone.
         Your Isaly account is shared with other Isaly apps, so one app must not delete the account
-        itself. The app does not yet have a function for deleting your data yourself; contact{" "}
-        <a href={SUPPORT_MAILTO}>{SUPPORT_EMAIL}</a> and we will help.{" "}
-        <Todo>DESCRIBE HOW DELETION OF THE APP DATA AND THE SHARED ISALY ACCOUNT IS HANDLED</Todo>
+        itself; your login remains after you delete your data here, until you ask us to remove it
+        from all apps. If you email <a href={SUPPORT_MAILTO}>{SUPPORT_EMAIL}</a> instead, we delete
+        the app's data within 30 days. If you want your whole Isaly account removed from all apps,
+        say so in the email; we then delete the account and your data in all apps within 30 days.{" "}
+        <Todo>
+          LEGAL: confirm the time limit, how long data may remain in backups, and how the Feedback
+          Hub (a separate service) is handled
+        </Todo>
       </p>
     ),
   },

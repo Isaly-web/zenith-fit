@@ -30,7 +30,7 @@ function translateAuthError(err: unknown): string {
   if (message.includes("User already registered"))
     return "An account with that email already exists.";
   if (message.includes("Password should be at least"))
-    return "Password must be at least 6 characters.";
+    return "Password must be at least 8 characters.";
   return message || "Something went wrong. Please try again.";
 }
 
@@ -126,7 +126,7 @@ function LoginPage() {
                   type="password"
                   autoComplete={mode === "signin" ? "current-password" : "new-password"}
                   required
-                  minLength={6}
+                  minLength={mode === "signup" ? 8 : undefined}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="mt-1.5"

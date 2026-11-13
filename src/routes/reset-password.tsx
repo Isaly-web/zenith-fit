@@ -46,7 +46,7 @@ function ResetPasswordPage() {
               type="password"
               autoComplete="new-password"
               required
-              minLength={6}
+              minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="mt-1.5"
